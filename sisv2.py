@@ -10,7 +10,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from connector import con, cursor
-
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+import sys
+from PyQt5.uic import loadUiType
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -213,6 +217,7 @@ class Ui_MainWindow(object):
         self.comboBox_updatedeleteCourseCode = QtWidgets.QComboBox(self.deleteandupdate)
         self.comboBox_updatedeleteCourseCode.setGeometry(QtCore.QRect(150, 350, 91, 31))
         self.comboBox_updatedeleteCourseCode.setObjectName("comboBox_updatedeleteCourseCode")
+        self.comboBox_updatedeleteCourseCode.setEditable(True)
         self.lineEdit_updatedeleteCourse = QtWidgets.QLineEdit(self.deleteandupdate)
         self.lineEdit_updatedeleteCourse.setGeometry(QtCore.QRect(710, 150, 211, 41))
         self.lineEdit_updatedeleteCourse.setObjectName("lineEdit_updatedeleteCourse")
@@ -400,14 +405,19 @@ class Ui_MainWindow(object):
 
 #To add courses for the course table
     def AddCourse(self):
-        coursecode=self.lineEdit_addcoursecode
-        coursename = self.lineEdit_addcourse
+        print("12")
+        coursecode=self.lineEdit_addcoursecode.text()
+        coursename = self.lineEdit_addcourse.text()
 
         query = "INSERT INTO Course (code, course_name) VALUES (%s,%s)"
         value = (coursecode, coursename)
+        print(f"{coursecode},{coursename}")
+        print("13")
 
         cursor.execute(query, value)
+        print(f"{coursecode},{coursename}")
         con.commit()
+        print("1")
 
 
 
@@ -415,8 +425,10 @@ class Ui_MainWindow(object):
     def display_student(self):
         self.tableWidget_StudentTable.setColumnCount(0)
         query = ("SELECT * FROM Student")
+        print("12")
         cursor.execute(query)
         all_data = cursor.fetchall()
+        print(all_data)
         self.tableWidget_StudentTable.setColumnCount(len(all_data[0]))
         self.tableWidget_StudentTable.setRowCount(len(all_data[1]))
         self.tableWidget_StudentTable.setColumnWidth(0, 150)
@@ -425,6 +437,7 @@ class Ui_MainWindow(object):
         self.tableWidget_StudentTable.setColumnWidth(3, 150)
         self.tableWidget_StudentTable.setColumnWidth(4, 150)
         self.tableWidget_StudentTable.setHorizontalHeaderLabels(['Student ID', 'Name', 'Course Code', 'Year Level', 'Gender'])
+        print("123")
         for row in range(1):
             for column in range(0):
                 item = QTableWidgetItem(all_data[row][column])
@@ -436,25 +449,30 @@ class Ui_MainWindow(object):
             row_position = self.tableWidget_StudentTable.rowCount()
             self.tableWidget_StudentTable.insertRow(row_position)
 
+        print("1")
+
 #Display course table from database
     def display_course(self):
         self.tableWidget_CourseTable.setColumnCount(0)
-        query = ("SELECT * FROM Courses")
+        query = ("SELECT * FROM Course")
+        print("123")
         cursor.execute(query)
-        all_datax = cursor.fetchall()
-        self.tableWidget_CourseTable.setColumnCount(len(all_datax[0]))
-        self.tableWidget_CourseTable.setRowCount(len(all_datax[1]))
+        print("12")
+        all_data = cursor.fetchall()
+        print(all_data)
+        self.tableWidget_CourseTable.setColumnCount(len(all_data[0]))
+        self.tableWidget_CourseTable.setRowCount(len(all_data[1]))
         self.tableWidget_CourseTable.setColumnWidth(0, 200)
         self.tableWidget_CourseTable.setColumnWidth(1, 400)
 
         self.tableWidget_CourseTable.setHorizontalHeaderLabels(['Course Code', 'Course'])
         for row in range(1):
             for column in range(0):
-                itemx = QTableWidgetItem(all_datax[row][column])
-                self.tableWidget_CourseTable.setItem(row, column, itemx)
+                item = QTableWidgetItem(all_data[row][column])
+                self.tableWidget_CourseTable.setItem(row, column, item)
 
-        for Row, allvalx in enumerate(all_data1):
-            for Column, value in enumerate(allvalx):
+        for Row, allval in enumerate(all_data):
+            for Column, value in enumerate(allval):
                 self.tableWidget_CourseTable.setItem(Row, Column, QTableWidgetItem(str(value)))
             row_position = self.tableWidget_CourseTable.rowCount()
             self.tableWidget_CourseTable.insertRow(row_position)
@@ -507,7 +525,8 @@ class Ui_MainWindow(object):
         gender = self.comboBox_updatedeleteGender.currentText()
         yearlevel = self.comboBox_updatedeleteYearLlevel.currentText()
         coursecode = self.comboBox_updatedeleteCourseCode.currentText()
-        query = (f"UPDATE Student SET studentID= '{student_ID}', studentsName= '{name}' , gender = '{gender}' , yearlevel = '{yearlevel}', coursecode '{coursecode}'WHERE studentID = '{search_student}'")
+        print("1")
+        query = (f"UPDATE Student SET studentID= '{student_ID}', name= '{name}' , gender = '{gender}' , year = '{yearlevel}', coursecode = '{coursecode}' WHERE studentID = '{search_student}'")
         cursor.execute(query)
         con.commit()
 
@@ -516,8 +535,11 @@ class Ui_MainWindow(object):
         search_course = self.lineEdit_updatedeleteEnterCourseCode.text()
         coursecode = self.lineEdit_updatedeleteCourseCode.text()
         coursename = self.lineEdit_updatedeleteCourse.text()
-        query = (f"UPDATE Course SET code= '{coursecode}', course = '{coursename}'WHERE code = '{search_course}'")
+        print("1")
+        query = (f"UPDATE Course SET code= '{coursecode}', course_name = '{coursename}' WHERE code = '{search_course}'")
+        print(f"{coursecode},{coursename},{search_course}")
         cursor.execute(query)
+        print(query)
         con.commit()
 
 
